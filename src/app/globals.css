@@ -1,0 +1,80 @@
+@import "tailwindcss";
+
+/* Dark is the default (home, lobby, night, game over). */
+:root {
+  --bg: #070506;
+  --fg: #ebe1dc;
+  --card: #110b0d;
+  --muted: #8f7d7f;
+  --line: #2e1b20;
+  --accent: #d0161f;
+  --accent-fg: #fff3f0;
+  --glow: rgb(208 22 31 / 0.45);
+  --vignette: radial-gradient(120% 70% at 50% -15%, rgb(150 8 18 / 0.32), transparent 60%),
+    radial-gradient(140% 90% at 50% 120%, rgb(0 0 0 / 0.9), transparent 70%);
+  color-scheme: dark;
+}
+
+/* Day: ash and dried blood — lighter so the phase change is obvious, but never friendly.
+   Toggled on <html> by PhaseBanner. */
+:root.theme-day {
+  --bg: #cbc3b7;
+  --fg: #170d0e;
+  --card: #ded7cc;
+  --muted: #5f4f4c;
+  --line: #ad9f90;
+  --accent: #8e0b13;
+  --accent-fg: #fbefe9;
+  --glow: rgb(142 11 19 / 0.3);
+  --vignette: radial-gradient(130% 90% at 50% 40%, transparent 45%, rgb(60 0 6 / 0.28));
+  color-scheme: light;
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-fg: var(--fg);
+  --color-card: var(--card);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
+  --color-accent: var(--accent);
+  --color-accent-fg: var(--accent-fg);
+  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", "Hiragino Sans", "Noto Sans JP",
+    "Yu Gothic UI", sans-serif;
+  --font-display: var(--font-oswald), ui-sans-serif, system-ui, "Segoe UI", "Hiragino Sans", sans-serif;
+  --font-jp: var(--font-mincho), "Hiragino Mincho ProN", "Yu Mincho", serif;
+  --animate-flicker: flicker 6s infinite;
+}
+
+@keyframes flicker {
+  0%, 18%, 22%, 25%, 53%, 57%, 100% { opacity: 1; filter: drop-shadow(0 0 14px var(--glow)); }
+  20%, 24%, 55% { opacity: 0.55; filter: none; }
+}
+
+html,
+body {
+  background-color: var(--bg);
+  color: var(--fg);
+  transition: background-color 600ms ease, color 600ms ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  background-image: var(--vignette);
+  background-attachment: fixed;
+}
+
+/* Film grain */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  pointer-events: none;
+  opacity: 0.07;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+::selection {
+  background: var(--accent);
+  color: var(--accent-fg);
+}
