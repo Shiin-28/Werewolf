@@ -5,10 +5,11 @@ import { Play, UserX } from "lucide-react";
 import { rpc } from "@/lib/supabase";
 import { ROLES, ROLE_ORDER } from "@/lib/roles";
 import { validateSetup } from "@/lib/validate";
-import type { RoleCounts, Snapshot } from "@/lib/types";
+import type { RoleCounts, RoleId, Snapshot } from "@/lib/types";
 import { BottomBar, Button, Card, Notice, Stepper, Toggle } from "@/components/ui";
 import { PlayerList } from "@/components/PlayerList";
 import { useConfirm } from "@/components/ConfirmDialog";
+import { RoleInfoDialog } from "@/components/RoleInfoDialog";
 import { SharePanel } from "./SharePanel";
 
 const SAVE_DEBOUNCE_MS = 400;
@@ -40,6 +41,7 @@ export function LobbySetup({ snap, broadcastRefresh }: { snap: Snapshot; broadca
   const [saving, setSaving] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [infoRole, setInfoRole] = useState<RoleId | null>(null);
   const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => () => {
@@ -119,6 +121,7 @@ export function LobbySetup({ snap, broadcastRefresh }: { snap: Snapshot; broadca
   return (
     <>
       {dialog}
+      <RoleInfoDialog role={infoRole} onClose={() => setInfoRole(null)} />
       {/* Desktop: invite + players on the left, setup pinned on the right (matches the in-game layout). */}
       <div className="flex flex-col gap-4 lg:grid lg:grid-cols-[minmax(0,1fr)_380px] lg:items-start lg:gap-6">
         <div className="flex min-w-0 flex-col gap-4">
@@ -165,9 +168,15 @@ export function LobbySetup({ snap, broadcastRefresh }: { snap: Snapshot; broadca
                   max={info.max ?? 20}
                   onChange={(n) => update({ ...draft, role_counts: { ...draft.role_counts, [r]: n } })}
                   icon={
-                    <span className={`grid size-10 shrink-0 place-items-center rounded-md border border-black/40 ${info.card}`}>
+                    <button
+                      type="button"
+                      onClick={() => setInfoRole(r)}
+                      aria-label={`What does the ${info.name} do?`}
+                      title={`About the ${info.name}`}
+                      className={`grid size-10 shrink-0 place-items-center rounded-md border border-black/40 transition hover:ring-2 hover:ring-accent ${info.card}`}
+                    >
                       <Icon className="size-5" aria-hidden />
-                    </span>
+                    </button>
                   }
                 />
               );
